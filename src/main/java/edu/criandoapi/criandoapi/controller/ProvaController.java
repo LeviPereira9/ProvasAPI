@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import edu.criandoapi.criandoapi.controller.dto.ProvaDto;
+import edu.criandoapi.criandoapi.controller.dto.ProvaSimplesDto;
+import edu.criandoapi.criandoapi.domain.repository.ProvaRepository;
 import edu.criandoapi.criandoapi.service.ProvaService;
 
 @RestController
@@ -25,6 +27,9 @@ public class ProvaController {
 
     @Autowired
     ProvaService provaService;
+
+    @Autowired
+    ProvaRepository provaRepository;
 
     @GetMapping
     public ResponseEntity<List<ProvaDto>> findAll() {
@@ -64,6 +69,13 @@ public class ProvaController {
         provaService.deleteProva(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/simples")
+    public ResponseEntity<List<ProvaSimplesDto>> getAllProvasSimples() {
+        List<ProvaSimplesDto> provas = provaService.getAllProvasSimples();
+
+        return ResponseEntity.ok(provas);
     }
 
 }

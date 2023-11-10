@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import edu.criandoapi.criandoapi.controller.dto.QuestaoDto;
 import edu.criandoapi.criandoapi.domain.model.Questao;
 import edu.criandoapi.criandoapi.service.ProvaService;
+import edu.criandoapi.criandoapi.service.QuestaoService;
 import edu.criandoapi.criandoapi.service.exception.NotFoundException;
 
 @RestController
@@ -28,10 +29,13 @@ public class QuestaoController {
     @Autowired
     ProvaService provaService;
 
+    @Autowired
+    QuestaoService questaoService;
+
     @GetMapping
     public ResponseEntity<List<QuestaoDto>> getQuestoes(@PathVariable Long provaId) {
 
-        var questoes = provaService.getAllQuestoes(provaId);
+        var questoes = questaoService.getAllQuestoes(provaId);
 
         List<QuestaoDto> questoesDto = questoes.stream().map(QuestaoDto::new).collect(Collectors.toList());
 
@@ -39,20 +43,21 @@ public class QuestaoController {
     }
 
     @GetMapping("/{numeroDaQuestao}")
-    public ResponseEntity<QuestaoDto> getQuestao(
+    public ResponseEntity<QuestaoDto> buscarQuestaoPorProvaIdENumero(
             @PathVariable Long provaId,
             @PathVariable int numeroDaQuestao) {
 
-        Questao questao = provaService.getQuestaoById(provaId, numeroDaQuestao).orElseThrow(NotFoundException::new);
+        Questao questaoOptional = questaoService.findQuestaoByProvaIdAndNumeroQuestao(provaId, numeroDaQuestao)
+                .orElseThrow(NotFoundException::new);
 
-        return ResponseEntity.ok(new QuestaoDto(questao));
+        return ResponseEntity.ok(new QuestaoDto(questaoOptional));
     }
 
     @PostMapping
     public ResponseEntity<QuestaoDto> createQuestaoProva(@PathVariable Long provaId,
             @RequestBody QuestaoDto novaQuestaoDto) {
 
-        Questao questao = provaService.createQuestao(provaId, novaQuestaoDto.toModel());
+        Questao questao = questaoService.createQuestao(provaId, novaQuestaoDto.toModel());
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(questao.getNumeroDaQuestao())
@@ -68,7 +73,7 @@ public class QuestaoController {
             @PathVariable int numeroDaQuestao,
             @RequestBody QuestaoDto questaoToUpdate) {
 
-        var questao = provaService.updateQuestao(provaId, numeroDaQuestao, questaoToUpdate.toModel());
+        var questao = questaoService.updateQuestao(provaId, numeroDaQuestao, questaoToUpdate.toModel());
 
         return ResponseEntity.ok(new QuestaoDto(questao));
     }
@@ -77,7 +82,7 @@ public class QuestaoController {
     public ResponseEntity<Void> deleteQuestaoProva(
             @PathVariable Long provaId,
             @PathVariable int numeroDaQuestao) {
-        provaService.DeleteQuestaoByProvaId(provaId, numeroDaQuestao);
+        questaoService.DeleteQuestaoByProvaId(provaId, numeroDaQuestao);
 
         return ResponseEntity.noContent().build();
     }

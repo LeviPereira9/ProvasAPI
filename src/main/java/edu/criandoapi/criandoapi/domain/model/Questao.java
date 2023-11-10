@@ -22,7 +22,6 @@ public class Questao {
     private boolean anulada;
     private boolean temAssercoes;
     private String enunciado;
-
     private String opcaoCorreta;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
