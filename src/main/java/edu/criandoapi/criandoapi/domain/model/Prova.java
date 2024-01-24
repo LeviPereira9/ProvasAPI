@@ -25,6 +25,13 @@ public class Prova {
     @JoinColumn(nullable = true)
     private List<Questao> questoes;
 
+    @JoinColumn(nullable = false)
+    private String criadorId;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = true)
+    private List<UsuariosPermitidos> permitidos;
+
     public Long getId() {
         return id;
     }
@@ -63,6 +70,22 @@ public class Prova {
 
     public void setQuestoes(List<Questao> questoes) {
         this.questoes = questoes;
+    }
+
+    public String getCriadorId() {
+        return criadorId;
+    }
+
+    public void setCriadorId(String criadorId) {
+        this.criadorId = criadorId;
+    }
+
+    public List<UsuariosPermitidos> getPermitidos() {
+        return permitidos;
+    }
+
+    public void setPermitidos(List<UsuariosPermitidos> permitidos) {
+        this.permitidos = permitidos;
     }
 
 }

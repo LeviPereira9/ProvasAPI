@@ -13,8 +13,12 @@ spring:
         format_sql: true
   h2:
     console:
-      enabled: true
+      enabled: false
       path: /h2-console
       settings:
         trace: false
         web-allow-others: false
+  api: 
+    security:
+      token:
+        security: ${JWT_SECRET:my-secret-key}

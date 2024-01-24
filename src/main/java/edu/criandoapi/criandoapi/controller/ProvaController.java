@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import edu.criandoapi.criandoapi.controller.dto.ProvaDto;
 import edu.criandoapi.criandoapi.controller.dto.ProvaSimplesDto;
 import edu.criandoapi.criandoapi.domain.repository.ProvaRepository;
+import edu.criandoapi.criandoapi.domain.repository.UserRepository;
+import edu.criandoapi.criandoapi.domain.user.RegisterDto;
+import edu.criandoapi.criandoapi.domain.user.User;
 import edu.criandoapi.criandoapi.service.ProvaService;
 
 @RestController
@@ -30,6 +34,9 @@ public class ProvaController {
 
     @Autowired
     ProvaRepository provaRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<List<ProvaDto>> findAll() {
@@ -76,6 +83,25 @@ public class ProvaController {
         List<ProvaSimplesDto> provas = provaService.getAllProvasSimples();
 
         return ResponseEntity.ok(provas);
+    }
+
+    @PostMapping("/memes")
+    public ResponseEntity<?> memes(@RequestBody RegisterDto model) {
+
+        System.out.println(model.login());
+        System.out.println(model.password());
+        System.out.println(model.role());
+
+        if (this.userRepository.findByLogin(model.login()) != null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(model.password());
+        User newUser = new User(model.login(), encryptedPassword, model.role());
+
+        this.userRepository.save(newUser);
+
+        return ResponseEntity.ok().build();
     }
 
 }
