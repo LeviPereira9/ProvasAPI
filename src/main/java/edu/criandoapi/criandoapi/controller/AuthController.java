@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import edu.criandoapi.criandoapi.domain.user.RegisterDto;
 import edu.criandoapi.criandoapi.domain.user.User;
 import edu.criandoapi.criandoapi.infra.security.TokenService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
